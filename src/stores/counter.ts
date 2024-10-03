@@ -1,16 +1,21 @@
-import { ref, computed } from 'vue'
+import { ref} from 'vue'
 import { defineStore } from 'pinia'
 
 export const useCounterStore = defineStore('counter', () => {
-  const count = ref(0)
-  const isDarkMode = ref(window.matchMedia('(prefers-color-scheme: dark)').matches)
-  const switchMode = ()=>{
-    isDarkMode.value = !isDarkMode.value;
-  }
-  const doubleCount = computed(() => count.value * 2)
-  function increment() {
-    count.value++
-  }
 
+  const queryDarkMode = () => {
+    const lastModifiedRes = window.localStorage.getItem('isDarkMode')
+    if (lastModifiedRes === undefined) {
+      const queryRes = window.matchMedia('(prefers-color-scheme: dark)').matches
+      window.localStorage.setItem('isDarkMode', queryRes + '')
+      return queryRes
+    }
+    return lastModifiedRes === 'true';
+  }
+  const isDarkMode = ref<boolean>(queryDarkMode())
+  const switchMode = () => {
+    isDarkMode.value = !isDarkMode.value
+    window.localStorage.setItem('isDarkMode', isDarkMode.value+'')
+  }
   return { switchMode, isDarkMode }
 })

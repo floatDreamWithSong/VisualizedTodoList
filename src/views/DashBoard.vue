@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import router from '@/router';
+
 import { useCounterStore } from '@/stores/counter';
 import { ref } from 'vue';
 const theme = useCounterStore()
-console.log(router.currentRoute.value.fullPath)
+const sideBarStatus = ref(' custom-box-grid');
 const userEmail = '956968770@qq.com'
 const userName = 'floateDreamer'
 const avatarLink = 'https://q4.qlogo.cn/g?b=qq&nk='+956968770+'&s=40'
 const currentPageIndex = ref(0);
+const switchSideBarStatus = () => {
+  console.log('1')
+  sideBarStatus.value===' custom-box-grid'?' custom-box-grid-close':' custom-box-grid'
+}
 const sideNavInfo = [{
   text:'work panel',
   link:'/',
@@ -23,14 +27,14 @@ const sideNavInfo = [{
 }]
 </script>
 <template>
-    <div id="dash-box" class=" w-full h-full font-semibold  p-4 custom-box-grid" :class="theme.isDarkMode?'text-slate-200':'text-slate-800'">
-        <div id="dash-side" class="h-full relative">
+    <div id="dash-box" class=" w-full h-full font-semibold  p-4 grid " :class="(theme.isDarkMode?'text-slate-200':'text-slate-800')+sideBarStatus">
+        <div id="dash-side" class="h-full relative ">
           <div id="status-box" class="h-20 custom-status-grid" >
             <div class="avatar-box flex items-center justify-center">
-              <img class=" rounded-full" :src="avatarLink" alt="">
+              <img class="w-[40px] aspect-square rounded-full" :src="avatarLink" alt="">
             </div>
             <div class="user-name flex items-center">{{userName}}</div>
-            <div class="user-email text-[0.7rem] text-slate-600">{{userEmail}}</div>
+            <div class="user-email text-[0.7rem] text-slate-500">{{userEmail}}</div>
           </div>
           <hr class="h-[2px] w-5/6 mx-auto bg-black/10 mb-4">
           <nav class=" flex-col flex" >
@@ -41,8 +45,9 @@ const sideNavInfo = [{
               <p class="flex items-center">{{i.text}}</p>
             </RouterLink>
           </nav>
-          <div class="w-full absolute bottom-0">
-            <i @click="theme.switchMode" class="hover:bg-gray-600/50 transition-all aspect-square px-1 text-2xl rounded-full" :class="theme.isDarkMode?'bi-brightness-low-fill':'bi-moon-stars-fill'"></i>
+          <div class="w-full absolute bottom-0 *:ml-4  *:transition-all *:hover:cursor-pointer *:aspect-square *:px-1 *:text-xl *:rounded-full">
+            <i @click="theme.switchMode" class="hover:bg-gray-600/50"  :class="theme.isDarkMode?'bi-brightness-low-fill':'bi-moon-stars-fill'" />
+            <i @click="switchSideBarStatus" class="bi-chevron-double-right hover:bg-gray-600/50"/>
           </div>
         </div>
         <main class="pl-4">
@@ -52,8 +57,10 @@ const sideNavInfo = [{
 </template>
 <style scoped>
 .custom-box-grid {
-    display: grid;
     grid-template-columns: 200px 1fr;
+  }
+  .custom-box-grid-close{
+    grid-template-columns: 100px 1fr;
   }
 .custom-status-grid{
   display: grid;
