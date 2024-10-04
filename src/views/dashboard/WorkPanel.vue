@@ -2,11 +2,11 @@
 import {useCounterStore} from '@/stores/counter';
 import {useTodayStore} from '@/stores/today';
 import {useMouse} from '@/tools/mouse';
-import {onBeforeMount, onBeforeUnmount, onMounted, ref} from 'vue';
+import {computed, onBeforeMount, onBeforeUnmount, onMounted, ref} from 'vue';
 import { useEventListener } from '../../tools/event';
 
 const canvas = ref<HTMLCanvasElement>();
-let canvasWidth = 0,canvasHeight = 0,canvasRootHeight=0;
+let canvasWidth = 0,canvasHeight = 500,canvasRootHeight=0;
 let ctx: CanvasRenderingContext2D;
 const mousePositionX = ref(0);
 const mousePositionY = ref(0);
@@ -30,8 +30,7 @@ function startCanvas(){
   const _canvas = canvas.value as HTMLCanvasElement;
   _canvas.width =  (_canvas.parentElement as HTMLElement).offsetWidth * ratio;
   canvasWidth = _canvas.width;
-  _canvas.height = _canvas.width/4;
-  canvasHeight = _canvas.height
+  _canvas.height = canvasHeight
   _canvas.addEventListener('wheel',function(e:WheelEvent){
     e.preventDefault()
     canvasRootHeight+=e.deltaY*0.15
@@ -95,19 +94,19 @@ function drawTransaction(ctx:CanvasRenderingContext2D){
     const h = 40
     const rx= i.getRelativeData().start*canvasWidth,w = i.getRelativeData().length*canvasWidth
     const ed = rx+w;
-    console.log(i,':',t,rx,ed)
+    // console.log(i,':',t,rx,ed)
     for(let i=0;i<t.length;i++){
       if(t[i]<rx){
         t[i] = ed;
         row = i
-        console.log(id,t[i],rx)
+        // console.log(id,t[i],rx)
         resolved = true
         break;
       }
     }
-    console.log(resolved)
+    // console.log(resolved)
     if(!resolved){
-      console.log(row);
+      // console.log(row);
       row = t.length;
       t.push(ed);
     }
@@ -141,6 +140,15 @@ onBeforeUnmount(() => {
   clearInterval(a);
 })
 const todayData = useTodayStore().todayData
+const inRangeCurData = computed(()=> todayData.filter((i)=>
+    i.getRelativeData().start< timePosition.value && i.getRelativeData().end > timePosition.value)
+
+)
+const inRangeSelectData = computed(()=>
+  todayData.filter((i)=>{
+  const rx= i.getRelativeData().start*canvasWidth,w = i.getRelativeData().length*canvasWidth
+  return rx<mousePositionX.value && rx+w>mousePositionX.value
+}))
 const theme = useCounterStore()
 const checked = ref('today')
 const isOptionPanelOpen = ref(false)
@@ -183,10 +191,27 @@ const sectionList = [{
 
 
     <div id="canvas-box" class=" shadow-sm w-full p-2 mt-4 rounded-lg">
-      <canvas @mousemove="handleMouseMove" class="bg-transparent" id="canvas" ref="canvas">Your device is not support canvas</canvas>
+      <canvas @click="handleMouseMove" class="bg-transparent" id="canvas" ref="canvas">Your device is not support canvas</canvas>
     </div>
-    <div class="w-full bg-black h-full flex-1">
-
+    <div class="w-full flex justify-around *:p-2 *:mt-4 *:w-5/12 *:item-center *:flex-col *:bg-slate-400 *:h-fit">
+      <ul id="cur-plan" class=" ">
+        <p v-if="!inRangeCurData.length">当前时间没有事务</p>
+        <li v-else v-for="i in inRangeCurData">
+          <article>
+            <section>{{ i.content }}</section>
+            <p>{{i.startTime.toLocaleTimeString()}} 开始 <br> {{i.endTime.toLocaleTimeString()}} 结束</p>
+          </article>
+        </li>
+      </ul>
+      <ul id="select-plan" class="">
+        <p v-if="!inRangeSelectData.length">未选中时间</p>
+        <li v-else v-for="i in inRangeSelectData">
+          <article>
+            <section>{{ i.content }}</section>
+            <p>{{i.startTime.toLocaleTimeString()}} 开始 <br> {{i.endTime.toLocaleTimeString()}} 结束</p>
+          </article>
+        </li>
+      </ul>
     </div>
   </div>
 </template>

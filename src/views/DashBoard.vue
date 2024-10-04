@@ -9,7 +9,7 @@ const userName = 'floateDreamer'
 const avatarLink = 'https://q4.qlogo.cn/g?b=qq&nk='+956968770+'&s=40'
 const currentPageIndex = ref(0);
 const switchSideBarStatus = () => {
-  console.log('1')
+  // console.log('1')
   sideBarStatus.value===' custom-box-grid'?' custom-box-grid-close':' custom-box-grid'
 }
 const sideNavInfo = [{
