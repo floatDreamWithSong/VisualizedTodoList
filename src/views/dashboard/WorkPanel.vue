@@ -1,154 +1,24 @@
 <script setup lang="ts">
 import {useCounterStore} from '@/stores/counter';
-import {useTodayStore} from '@/stores/today';
-import {useMouse} from '@/tools/mouse';
-import {computed, onBeforeMount, onBeforeUnmount, onMounted, ref} from 'vue';
-import { useEventListener } from '../../tools/event';
+import { useCanvas,inRangeCurData, inRangeSelectData } from '@/tools/canvas';
+import { onBeforeUnmount, onMounted, ref} from 'vue';
 
 const canvas = ref<HTMLCanvasElement>();
-let canvasWidth = 0,canvasHeight = 500,canvasRootHeight=0;
-let ctx: CanvasRenderingContext2D;
-const mousePositionX = ref(0);
-const mousePositionY = ref(0);
-let last = 0;
-function handleMouseMove(event: MouseEvent) {
-  const cur = new Date().getTime();
-  const der = cur - last;
-  if (der < 16) {
-    return
-  }
-  last = cur;
-  const rect = (canvas.value as HTMLCanvasElement).getBoundingClientRect();
-  mousePositionX.value = (event.clientX - rect.left)*2 // 鼠标相对于元素左边的偏移
-  mousePositionY.value = (event.clientY - rect.top)*2
-  
-}
 
-let previousTimeStamp: number= 0;
-function startCanvas(){
-  const ratio = 2;
-  const _canvas = canvas.value as HTMLCanvasElement;
-  _canvas.width =  (_canvas.parentElement as HTMLElement).offsetWidth * ratio;
-  canvasWidth = _canvas.width;
-  _canvas.height = canvasHeight
-  _canvas.addEventListener('wheel',function(e:WheelEvent){
-    e.preventDefault()
-    canvasRootHeight+=e.deltaY*0.15
-  })
-  _canvas.style.width = canvasWidth/ratio + 'px', _canvas.style.height = canvasHeight/ratio + 'px'
-  ctx = (canvas.value?.getContext('2d')) as  CanvasRenderingContext2D;
-  ctx.scale(1,1)
-  window.requestAnimationFrame(loop)
-}
-function getRelativeTime(milscs:number){
-  const hour = Math.floor(milscs / 3600000);
-  milscs -= hour * 3600000;
-  const min = Math.floor(milscs/60000);
-  milscs -= min*60000;
-  const s = Math.floor(milscs / 1000);
-  return {
-    h:hour,
-    m:min,
-    s:s
-  }
-}
-function loop(timestamp: number) {
-  if (timestamp-previousTimeStamp > 16) {
-    Draw()
-    previousTimeStamp = timestamp;
-  }
-  
-  window.requestAnimationFrame(loop);
-}
-function Draw(){
-  ctx.clearRect(0,0,canvasWidth,canvasHeight)
-  drawBackGround(ctx);
-  ctx.fillStyle = 'red'
-  ctx.fillRect(mousePositionX.value,0,1,canvasHeight)
-  ctx.font = '28px sans-serif'
-  const t = getRelativeTime((mousePositionX.value/canvasWidth)*3600000*24)
-  ctx.fillText(`${t.h}:${t.m}:${t.s}`,mousePositionX.value,mousePositionY.value)
-  ctx.fillStyle = '#007755'
-  ctx.fillRect(timePosition.value * canvasWidth,0,1,canvasHeight)
-  drawTransaction(ctx);
-}
-
-function drawBackGround(ctx:CanvasRenderingContext2D){
-  const div = canvasWidth/24;
-  ctx.fillStyle = 'gray'
-  ctx.font = '24px sans-serif'
-  for(let i=0;i<24;i++){
-    const w = div*i
-    ctx.fillRect(w,0,1,canvasHeight)
-    ctx.fillText(`${i}h`,w,canvasHeight)
-  }
-}
-function drawTransaction(ctx:CanvasRenderingContext2D){
-  ctx.font = `28px sans-serif`
-  let t =[-1]
-  todayData.forEach((i,id)=>{
-
-  let row = 0
-  let resolved = false;
-    ctx.fillStyle = i.bgColor
-    const h = 40
-    const rx= i.getRelativeData().start*canvasWidth,w = i.getRelativeData().length*canvasWidth
-    const ed = rx+w;
-    // console.log(i,':',t,rx,ed)
-    for(let i=0;i<t.length;i++){
-      if(t[i]<rx){
-        t[i] = ed;
-        row = i
-        // console.log(id,t[i],rx)
-        resolved = true
-        break;
-      }
-    }
-    // console.log(resolved)
-    if(!resolved){
-      // console.log(row);
-      row = t.length;
-      t.push(ed);
-    }
-    const ry = row*h+canvasRootHeight+row
-    if(i.getRelativeData().start< timePosition.value && i.getRelativeData().end > timePosition.value){
-      ctx.fillStyle = '#007755'
-    }else if(rx<mousePositionX.value && rx+w>mousePositionX.value){
-      ctx.fillStyle = 'red'
-    }
-    ctx.fillRect(rx,ry,w,h);
-    ctx.fillStyle = i.color
-    ctx.fillText(i.content,rx,ry+h*0.7,w)
-  })
-}
-const timePosition = ref(0)
-let timeRel = 0
-function timeCursor() {
-  const startOfDay = new Date();
-  startOfDay.setHours(0, 0, 0, 0);
-  const _d = startOfDay.getTime()
-  const d = new Date().getTime();
-  timeRel = d - _d;
-  timePosition.value = timeRel / (24 * 3600000)
-}
-
-const a = setInterval(timeCursor, 1000);
 onMounted(() => {
-  startCanvas()
+  const {closeCanvas} = useCanvas({
+    canvas: (canvas.value as HTMLCanvasElement),
+    derta: 16,
+    ratio: 2,
+    fontRatio: 1,
+    height: 500,
+  })
+  onBeforeUnmount(() => {
+    closeCanvas()
 })
-onBeforeUnmount(() => {
-  clearInterval(a);
 })
-const todayData = useTodayStore().todayData
-const inRangeCurData = computed(()=> todayData.filter((i)=>
-    i.getRelativeData().start< timePosition.value && i.getRelativeData().end > timePosition.value)
 
-)
-const inRangeSelectData = computed(()=>
-  todayData.filter((i)=>{
-  const rx= i.getRelativeData().start*canvasWidth,w = i.getRelativeData().length*canvasWidth
-  return rx<mousePositionX.value && rx+w>mousePositionX.value
-}))
+// 控制状态开关的
 const theme = useCounterStore()
 const checked = ref('today')
 const isOptionPanelOpen = ref(false)
@@ -191,7 +61,7 @@ const sectionList = [{
 
 
     <div id="canvas-box" class=" shadow-sm w-full p-2 mt-4 rounded-lg">
-      <canvas @click="handleMouseMove" class="bg-transparent" id="canvas" ref="canvas">Your device is not support canvas</canvas>
+      <canvas class="bg-transparent w-full" id="canvas" ref="canvas">Your device is not support canvas</canvas>
     </div>
     <div class="w-full flex justify-around *:p-2 *:mt-4 *:w-5/12 *:item-center *:flex-col *:bg-slate-400 *:h-fit">
       <ul id="cur-plan" class=" ">

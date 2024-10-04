@@ -1,6 +1,5 @@
-import { defineStore } from 'pinia'
 
-class todayTransaction {
+export class todayTransaction {
     content: string = '某一件事请。'
     bgColor: string = 'gray'
     color: string = 'white'
@@ -14,24 +13,19 @@ class todayTransaction {
         return { start: _s, end:_e , length:_e -_s }
     }
 }
-export const useTodayStore = defineStore('today', () => {
-    const getTodayData = () => {
-        const data: todayTransaction[] = [];
-        for (let i = 0; i < 24; i++) {
-            const _data = new todayTransaction()
-            _data.content+=i
-            _data.startTime.setHours(i,0,0,0);
-            _data.endTime.setHours(i + Math.floor(Math.random()*5),50);
-            data.push(_data)
-        }
-        return data;
+export const todayData =  {
+    data:[] as todayTransaction[]
+}
+const getTodayData = () => {
+    const data: todayTransaction[] = [];
+    for (let i = 0; i < 24; i++) {
+        const _data = new todayTransaction()
+        _data.content+=i
+        _data.startTime.setHours(i,0,0,0);
+        _data.endTime.setHours(i + Math.floor(Math.random()*5),50);
+        data.push(_data)
     }
-    const todayData: todayTransaction[] = getTodayData();
-    const sortData = () => {
-        todayData.sort((a, b) => {
-            return a.startTime.getTime() - b.startTime.getTime()
-        })
-    }
+    todayData.data = data;
+}
+getTodayData()
 
-    return { todayData }
-})
