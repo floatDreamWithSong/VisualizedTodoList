@@ -21,7 +21,7 @@ const sideNavInfo = [{
   link:'/dashboard/profile',
   ico:'bi-person'
 },{
-  text:'work panel',
+  text:'settings',
   link:'/dashboard/settings',
   ico:'bi-sliders'
 }]
@@ -39,7 +39,7 @@ const sideNavInfo = [{
           <hr class="h-[2px] w-5/6 mx-auto bg-black/10 mb-4">
           <nav class=" flex-col flex" >
             <RouterLink class="mx-4 my-2 text-lg custom-nav-grid" @click="currentPageIndex = id" v-for="(i,id) in sideNavInfo"
-             :class="id===currentPageIndex?(theme.isDarkMode?'text-slate-200 bg-white/10': 'text-slate-900 bg-slate-100/40')+' shadow-md rounded-lg':(theme.isDarkMode?'text-slate-400':'text-slate-600')" 
+             :class="id===currentPageIndex?(theme.isDarkMode?'text-slate-200 bg-white/10': 'text-slate-900 bg-slate-100/40')+' shadow-md rounded-lg':(theme.isDarkMode?'text-slate-400':'text-slate-600')"
              :key="id" :to="i.link">
               <i class="ml-3 my-1 mr-4" :class="i.ico"></i>
               <p class="flex items-center">{{i.text}}</p>
