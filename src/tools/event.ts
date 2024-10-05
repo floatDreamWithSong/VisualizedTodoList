@@ -6,3 +6,14 @@ export function useEventListener(target:any, event:string, callback:Function) {
   onMounted(() => target.addEventListener(event, callback))
   onUnmounted(() => target.removeEventListener(event, callback))
 }
+export const createCustomEvent = (eventName: string, detail?:any)=>{
+  const event = new CustomEvent(eventName, {
+    bubbles: true,    // 事件是否冒泡
+    cancelable: true, // 事件是否可以取消
+  });
+  return event;
+}
+export const dispatchCustomEvent = (element: HTMLElement, eventName: string, detail:any) => {
+  const event = createCustomEvent(eventName, detail);
+  element.dispatchEvent(event);
+}

@@ -1,8 +1,9 @@
 
 export class todayTransaction {
+    title = '事情名字'
     content: string = '某一件事请。'
-    bgColor: string = 'gray'
-    color: string = 'white'
+    bgColor: string = '#5d6d7e'
+    color: string = '#fcfcfc'
     startTime: Date = new Date()
     endTime: Date = new Date()
     getRelativeData() {
@@ -16,11 +17,12 @@ export class todayTransaction {
 export const todayData =  {
     data:[] as todayTransaction[]
 }
+
 const getTodayData = () => {
     const data: todayTransaction[] = [];
     for (let i = 0; i < 24; i++) {
         const _data = new todayTransaction()
-        _data.content+=i
+        _data.title+=i
         _data.startTime.setHours(i,0,0,0);
         _data.endTime.setHours(i + Math.floor(Math.random()*5),50);
         data.push(_data)
