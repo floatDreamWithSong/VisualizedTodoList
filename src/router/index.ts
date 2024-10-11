@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import WorkPanel from '@/views/dashboard/WorkPanel.vue'
+import WorkSheet from '@/views/dashboard/WorkSheet.vue'
 import DashBoard from '@/views/DashBoard.vue'
 import App from '@/App.vue'
+import WorkS from '@/views/dashboard/WorkSheet.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -23,11 +24,11 @@ const router = createRouter({
         },{
           path:'',
           name:'work',
-          component:WorkPanel
+          component:WorkSheet
         },{
-          path:'/dashboard/profile',
-          name:'profile',
-          component:()=>import('../views/dashboard/TheProfile.vue')
+          path:'/dashboard/workbench',
+          name:'workbench',
+          component:()=>import('../views/dashboard/WorkBench.vue')
         }]
       },
       {

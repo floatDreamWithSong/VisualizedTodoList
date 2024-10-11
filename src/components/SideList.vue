@@ -1,6 +1,6 @@
 <script setup lang="ts">
 </script>
 <template>
-<div class="">p</div>
+<div class=""></div>
 </template>
 <style scoped></style>

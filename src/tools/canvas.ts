@@ -1,5 +1,5 @@
 import { type todayTransaction } from "@/stores/today";
-import { computed, reactive, ref, watch, watchEffect, type Ref } from "vue";
+import { computed, ref } from "vue";
 import { todayData } from "@/stores/today";
 
 interface canvasConfig {
@@ -64,7 +64,6 @@ export function useCanvas(config: canvasConfig) {
         }
         last = cur;
         const rect = canvas.getBoundingClientRect();
-        console.log(mousePositionX.value)
         mousePositionX.value = (event.clientX - rect.left) * ratio // 鼠标相对于元素左边的偏移
         mousePositionY = (event.clientY - rect.top) * ratio
     }

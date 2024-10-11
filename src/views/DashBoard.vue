@@ -2,7 +2,6 @@
 
 import { useCounterStore } from '@/stores/counter';
 import { reset } from '@/tools/canvas';
-import { createCustomEvent } from '@/tools/event';
 import { ref } from 'vue';
 const theme = useCounterStore()
 const sideBarStatus = ref(true);
@@ -11,30 +10,28 @@ const userName = 'floateDreamer'
 const avatarLink = 'https://q4.qlogo.cn/g?b=qq&nk='+956968770+'&s=40'
 const currentPageIndex = ref(0);
 const switchSideBarStatus = () => {
-  // console.log('1')
   sideBarStatus.value  = !sideBarStatus.value
- setTimeout(()=>reset(500),300)
-
+  setTimeout(()=>reset(500),300)
 }
 const sideNavInfo = [{
-  text:'work panel',
+  text:'WorkSheet',
   link:'/',
   ico:'bi-window-dock'
 },{
-  text:'profile',
-  link:'/dashboard/profile',
+  text:'WorkBench',
+  link:'/dashboard/workbench',
   ico:'bi-person'
 },{
-  text:'settings',
+  text:'Settings',
   link:'/dashboard/settings',
   ico:'bi-sliders'
 }]
 </script>
 <template>
     <div id="dash-box" class=" w-full h-full font-semibold  p-4 grid custom-box-grid transition-all" :class="(theme.isDarkMode?'text-slate-200':'text-slate-800')+(sideBarStatus?' custom-box-grid':' custom-close-grid')">
-        <div  id="dash-side" class="h-full relative w-[200px]  overflow-hidden" :class="sideBarStatus?'':' -z-10'">
-          <div v-show="sideBarStatus" id="status-box" class="h-20 custom-status-grid" >
-            <div class="avatar-box flex items-center justify-center">
+        <div  id="dash-side" class="h-full relative w-[200px] overflow-hidden" :class="sideBarStatus?'':' -z-10'">
+          <div v-show="sideBarStatus" id="status-box" class="mb-2 rounded-lg h-20 custom-status-grid" >
+            <div class="avatar-box flex items-center justify-center ">
               <img  class="w-[40px] aspect-square rounded-full" :src="avatarLink" alt="">
             </div>
             <div class="user-name flex items-center">{{userName}}</div>
