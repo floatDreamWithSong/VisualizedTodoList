@@ -1,4 +1,5 @@
 import { getMonitorTasksData } from '@/classes'
+import type { ImplicityTask } from '@/classes/implicityTask'
 import { Task, TaskGroup } from '@/classes/Task'
 import { defineStore } from 'pinia'
 import { reactive } from 'vue'
@@ -8,7 +9,7 @@ export const useTaskStore = defineStore('task', () => {
     const addTaskGroup = (name: string) => {
         taskGroups.push(new TaskGroup(name))
     }
-    const addTaskIntoGroup = (index: number, task: Task) => {
+    const addTaskIntoGroup = (index: number, task: ImplicityTask) => {
         taskGroups[index].tasks.push(reactive(task))
     }
     const deleteTaskFromGroupById = (index: number, taskIndex: number) => {

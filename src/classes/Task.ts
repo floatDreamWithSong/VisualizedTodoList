@@ -4,7 +4,7 @@ export abstract class Task {
     bgColor: string
     color: string
     id: number = new Date().getTime()+Math.random()
-    constructor(name: string, description: string, bgColor: string = '', color: string = '') {
+    constructor(name: string, description: string, bgColor: string = '#fcfcfc', color: string = '#2c2c2c') {
         this.name = name
         this.description = description
         this.bgColor = bgColor
