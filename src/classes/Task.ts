@@ -1,3 +1,6 @@
+import type { ExplicityTask } from "./explicityTask"
+import type { ImplicityTask } from "./implicityTask"
+
 export abstract class Task {
     name: string
     description: string
@@ -12,7 +15,7 @@ export abstract class Task {
     }
 }
 export class TaskGroup {
-    tasks: Task[]
+    tasks: ImplicityTask[]
     groupName: string
     id: number = new Date().getTime()+Math.random()
     constructor(name: string) {

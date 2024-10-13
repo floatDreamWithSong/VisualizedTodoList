@@ -48,12 +48,18 @@ const sideNavInfo = [{
           </nav>
 
         </div>
-        <div class="absolute bottom-4 *:ml-4  *:transition-all *:hover:cursor-pointer *:aspect-square *:mt-1 *:px-1 *:text-xl *:rounded-full *:block">
-          <i @click="theme.switchMode" class="hover:bg-gray-600/50"  :class="theme.isDarkMode?'bi-brightness-low-fill':'bi-moon-stars-fill'" />
-          <i @click="switchSideBarStatus" class=" hover:bg-gray-600/50 " :class="sideBarStatus?'bi-arrow-left-circle-fill':'bi-arrow-right-circle-fill'"/>
-        </div>
+
         <main class="pl-4 h-full overflow-y-scroll">
-          <RouterView />
+          <RouterView v-slot="{Component}">
+            <component :is="Component">
+              <template #close>
+                <i @click="switchSideBarStatus" class=" hover:bg-gray-600/50 bi-three-dots"/>
+              </template>
+              <template #darkmode>
+                <i @click="theme.switchMode" class="hover:bg-gray-600/50 "  :class="theme.isDarkMode?'bi-brightness-low-fill':'bi-moon-stars-fill'" />
+              </template>
+            </component>
+          </RouterView>
         </main>
       </div>
 </template>

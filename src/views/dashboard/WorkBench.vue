@@ -14,7 +14,12 @@ const changeGroup = (ind: number) => {
         :class="theme.isDarkMode ? ' bg-white/5 ' : ' bg-slate-100 '">
         <div class=" w-80 h-full p-4  rounded-l-lg grid custom-grid border-r-2 border-slate-400/10"
             :class="theme.isDarkMode ? ' bg-black/15' : ''">
-            <SideList :current-group-id="currentGroupId" :change-group="changeGroup" />
+            <SideList :current-group-id="currentGroupId" :change-group="changeGroup">
+                <template #closel>
+                    <slot name="close"></slot>
+                    <slot name="darkmode"></slot>
+                </template>
+            </SideList>
         </div>
         <div class=" h-full flex-grow rounded-r-lg " :class="theme.isDarkMode ? ' bg-black/5' : 'bg-gray-100'">
 
@@ -24,6 +29,6 @@ const changeGroup = (ind: number) => {
 </template>
 <style scoped>
 .custom-grid {
-    grid-template-rows: 4rem 1fr 3rem;
+    grid-template-rows: 1.25rem 4rem 1fr 3rem;
 }
 </style>

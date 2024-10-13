@@ -16,6 +16,11 @@ defineProps({
 })
 </script>
 <template>
+    <div class="*:cursor-pointer *:px-1 *:rounded-md">
+        <slot name="closel"/>
+        <slot name="dark"/>
+    </div>
+    
     <input class="my-4 w-full outline-none px-2 rounded-md text-black/70 flex border-b-2"
         :class="theme.isDarkMode ? ' bg-white/5 border-slate-50/5 text-slate-200' : ' border-slate-200'"
         placeholder="Search" type="text" v-model="searchText">

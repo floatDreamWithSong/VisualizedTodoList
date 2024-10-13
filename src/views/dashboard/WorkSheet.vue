@@ -24,6 +24,10 @@ const theme = useCounterStore()
 <template>
   <div class="w-full h-full p-2  rounded-lg shadow-md flex-col overflow-scroll"
     :class="(theme.isDarkMode ? 'text-slate-200 bg-black/15' : 'text-slate-800 bg-white/25')">
+    <div class="*:px-1 *:rounded-md *:cursor-pointer ">
+      <slot name="close"></slot>
+      <slot name="darkmode"></slot>
+    </div>
     <div class=" w-full mt-4 flex-col">
       <div id="canvas-box" class=" shadow-md w-full p-2 mt-4 rounded-lg">
         <canvas class="bg-transparent w-full" id="canvas" ref="canvas">Your device is not support canvas</canvas>
