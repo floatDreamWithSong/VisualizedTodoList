@@ -3,7 +3,9 @@ import { Task } from "./Task";
 export class ExplicityTask extends Task {
     start: Time
     end: Time
+    isTimeValid: boolean = false
     work: WeekModeWorkTime
+    isTimeEnable: boolean = false
     constructor(
         name: string, desc: string, start: Time, end: Time, work: WeekModeWorkTime,
         bgColor: string = '#fcfcfc',
