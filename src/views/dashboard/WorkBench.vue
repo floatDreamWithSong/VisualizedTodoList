@@ -15,7 +15,6 @@ const changeGroup = (ind: number) => {
         <div class=" w-80 h-full p-4  rounded-l-lg grid custom-grid border-r-2 border-slate-400/10"
             :class="theme.isDarkMode ? ' bg-black/15' : ''">
             <SideList :current-group-id="currentGroupId" :change-group="changeGroup" />
-            
         </div>
         <div class=" h-full flex-grow rounded-r-lg " :class="theme.isDarkMode ? ' bg-black/5' : 'bg-gray-100'">
 
@@ -24,11 +23,7 @@ const changeGroup = (ind: number) => {
     </div>
 </template>
 <style scoped>
-
-
-
 .custom-grid {
     grid-template-rows: 4rem 1fr 3rem;
 }
-
 </style>

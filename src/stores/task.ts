@@ -1,6 +1,6 @@
 import { getMonitorTasksData } from '@/classes'
 import type { ImplicityTask } from '@/classes/implicityTask'
-import { Task, TaskGroup } from '@/classes/Task'
+import { TaskGroup } from '@/classes/Task'
 import { defineStore } from 'pinia'
 import { reactive } from 'vue'
 

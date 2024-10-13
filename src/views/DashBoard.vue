@@ -48,9 +48,9 @@ const sideNavInfo = [{
           </nav>
 
         </div>
-        <div class="absolute bottom-4 *:ml-4  *:transition-all *:hover:cursor-pointer *:aspect-square *:px-1 *:text-xl *:rounded-full">
+        <div class="absolute bottom-4 *:ml-4  *:transition-all *:hover:cursor-pointer *:aspect-square *:mt-1 *:px-1 *:text-xl *:rounded-full *:block">
           <i @click="theme.switchMode" class="hover:bg-gray-600/50"  :class="theme.isDarkMode?'bi-brightness-low-fill':'bi-moon-stars-fill'" />
-          <i @click="switchSideBarStatus" class=" hover:bg-gray-600/50 " :class="sideBarStatus?'bi-chevron-double-left':'bi-chevron-double-right'"/>
+          <i @click="switchSideBarStatus" class=" hover:bg-gray-600/50 " :class="sideBarStatus?'bi-arrow-left-circle-fill':'bi-arrow-right-circle-fill'"/>
         </div>
         <main class="pl-4 h-full overflow-y-scroll">
           <RouterView />
