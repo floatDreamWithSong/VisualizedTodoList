@@ -1,5 +1,5 @@
 import { FormatedDate, ImplicityTask } from './implicityTask';
-import { TaskGroup, Task } from './Task';
+import { TaskGroup} from './Task';
 export function getMonitorTasksData() {
     const arr: TaskGroup[] = [];
     let gcnt = random()
@@ -12,7 +12,7 @@ export function getMonitorTasksData() {
     return arr
 }
 export function getMonitorImplicityTask() {
-    const arr: Task[] = []
+    const arr: ImplicityTask[] = []
     let tcnt = random()
     for (let i = 0; i < tcnt; i++) {
         arr.push(getTask(i))

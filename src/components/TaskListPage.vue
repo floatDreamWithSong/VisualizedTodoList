@@ -31,10 +31,11 @@ const closeTaskEditor = () => {
 let fixedTaskName = ''
 </script>
 <template>
-    <slot></slot>
+
     <div v-if="!isEmptyPage() && props.currentGroupId != undefined"
         class="w-full h-full grid relative custom-grid2 overflow-hidden">
-        <div class="flex items-center w-full text-2xl font-bold px-4 z-11 justify-between">
+        <div class="flex items-center w-full text-2xl font-bold px-4 z-11 justify-start">
+            <slot></slot>
             <input type="text" class=" my-4 bg-transparent outline-none p-2 rounded-md focus-within:border-b-2 "
                 v-model.lazy="taskStroe.taskGroups[props.currentGroupId].groupName" />
         </div>

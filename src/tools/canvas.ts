@@ -1,6 +1,10 @@
-import { type todayTransaction } from "@/stores/today";
+import { todayTransaction } from "@/stores/today";
 import { computed, ref } from "vue";
 import { todayData } from "@/stores/today";
+import type { TaskGroup } from "@/classes/Task";
+import type { ImplicityTask } from "@/classes/implicityTask";
+import { ExplicityTask } from "@/classes/explicityTask";
+import { useTaskStore } from "@/stores/task";
 
 interface canvasConfig {
     canvas: HTMLCanvasElement
@@ -10,7 +14,7 @@ interface canvasConfig {
     fontRatio: number
     height: number
 }
-const green  = '#1ABC9C', red = '#e74c3c', blue = '#3498DB',normal = '#5d6d7e'
+const green = '#1ABC9C', red = '#e74c3c', blue = '#3498DB', normal = '#5d6d7e'
 // 绘制内容配置
 let transactionH = 40
 // 绘制配置
@@ -32,7 +36,7 @@ export function reset(height: number) {
     canvasWidth = canvas.width
     canvas.height = height
     canvasHeight = canvas.height
-    
+
 }
 
 export function useCanvas(config: canvasConfig) {
@@ -44,10 +48,10 @@ export function useCanvas(config: canvasConfig) {
     // 校准像素和配置宽度高度
 
     reset(config.height)
-    function e_reset(){
+    function e_reset() {
         reset(config.height)
     }
-    window.addEventListener('resize',e_reset)
+    window.addEventListener('resize', e_reset)
     // 监听滚动
     function lisent(e: WheelEvent) {
         e.preventDefault()
@@ -67,7 +71,7 @@ export function useCanvas(config: canvasConfig) {
         mousePositionX.value = (event.clientX - rect.left) * ratio // 鼠标相对于元素左边的偏移
         mousePositionY = (event.clientY - rect.top) * ratio
     }
-    function handleMouseClick(event: MouseEvent){
+    function handleMouseClick(event: MouseEvent) {
         const rect = canvas.getBoundingClientRect();
         mouseClickX.value = (event.clientX - rect.left) * ratio // 鼠标相对于元素左边的偏移
         mouseClickY = (event.clientY - rect.top) * ratio
@@ -81,7 +85,7 @@ export function useCanvas(config: canvasConfig) {
         const _d = startOfDay.getTime()
         const d = new Date().getTime();
         timeRel = d - _d;
-        timePosition.value = timeRel / (24 * 3600000)
+        timePosition.value = timeRel / (86400000) //24 * 3600000
     }
     timeCursor()
     const a = setInterval(timeCursor, 1000);
@@ -103,9 +107,9 @@ export function useCanvas(config: canvasConfig) {
         closeCanvas: () => {
             canvas.removeEventListener('wheel', lisent)
             canvas.removeEventListener('mousemove', handleMouseMove)
-            canvas.removeEventListener('click',handleMouseClick)
+            canvas.removeEventListener('click', handleMouseClick)
             clearInterval(a)
-            window.removeEventListener('resize',e_reset)
+            window.removeEventListener('resize', e_reset)
         }
     }
 }
@@ -143,13 +147,13 @@ function Draw(ctx: CanvasRenderingContext2D) {
     ctx.fillText(`${t.h}:${t.m}:${t.s}`, mousePositionX.value, mousePositionY)
 
     ctx.fillStyle = red
-    ctx.fillRect(mouseClickX.value, 0 ,1 ,canvasHeight)
+    ctx.fillRect(mouseClickX.value, 0, 1, canvasHeight)
     setFontStyle(28)
     const t2 = getRelativeTime((mouseClickX.value / canvasWidth) * 3600000 * 24)
     ctx.fillText(`${t2.h}:${t2.m}:${t2.s}`, mouseClickX.value, mouseClickY)
     ctx.fillStyle = blue
     ctx.fillRect(timePosition.value * canvasWidth, 0, 2, canvasHeight)
-    drawTransaction(ctx, todayData.data);
+    drawTransaction(ctx, useTaskStore().taskGroups);
 }
 
 function drawBackGround(ctx: CanvasRenderingContext2D) {
@@ -162,48 +166,86 @@ function drawBackGround(ctx: CanvasRenderingContext2D) {
         ctx.fillText(`${i}h`, w, canvasHeight)
     }
 }
-function drawTransaction(ctx: CanvasRenderingContext2D, todayData: todayTransaction[]) {
+function drawTransaction(ctx: CanvasRenderingContext2D, taskGroups: TaskGroup[]) {
+    // console.log(taskGroups)
     setFontStyle(28)
     let t = [-1]
-    todayData.forEach(i => {
-        let row = 0
-        let resolved = false;
-        ctx.fillStyle = i.bgColor
-        const h = transactionH
-        const rx = i.getRelativeData().start * canvasWidth, w = i.getRelativeData().length * canvasWidth
-        const ed = rx + w;
-        for (let i = 0; i < t.length; i++) {
-            if (t[i] < rx) {
-                t[i] = ed;
-                row = i
-                resolved = true
-                break;
-            }
-        }
-        if (!resolved) {
-            row = t.length;
-            t.push(ed);
-        }
-        const ry = row * h + canvasRootHeight + row
-        if (rx < mousePositionX.value && rx + w > mousePositionX.value) {
-            ctx.fillStyle = green
-        }else
-        if (rx < mouseClickX.value && rx + w > mouseClickX.value) {
-            ctx.fillStyle = red
-        }else if (i.getRelativeData().start < timePosition.value && i.getRelativeData().end > timePosition.value) {
-            ctx.fillStyle = blue
-        } 
-        ctx.fillRect(rx, ry, w, h);
-        ctx.fillStyle = i.color
-        ctx.fillText(i.title, rx, ry + h * 0.7, w)
+    taskGroups.forEach(tasks => {
+        tasks.tasks.forEach((task: ImplicityTask) => {
+            task.transcations.forEach((i: ExplicityTask) => {
+                console.log(i, i.isTimeEnable, i.work.isWorkToday())
+                if (i.isTimeEnable && i.work.isWorkToday()) {
+                    console.log(i)
+                    let row = 0
+                    let resolved = false;
+                    ctx.fillStyle = i.bgColor
+                    const h = transactionH
+                    const rx_r = ExplicityTask.getStartPointRatio(i)
+                    const rx = rx_r * canvasWidth;
+                    const w_r = ExplicityTask.getTimeRatio(i)
+                    const w = w_r * canvasWidth
+                    const ed = rx + w;
+                    for (let i = 0; i < t.length; i++) {
+                        if (t[i] < rx) {
+                            t[i] = ed;
+                            row = i
+                            resolved = true
+                            break;
+                        }
+                    }
+                    if (!resolved) {
+                        row = t.length;
+                        t.push(ed);
+                    }
+                    const ry = row * h + canvasRootHeight + row
+                    if (rx < mousePositionX.value && rx + w > mousePositionX.value) {
+                        ctx.fillStyle = green
+                    } else
+                        if (rx < mouseClickX.value && rx + w > mouseClickX.value) {
+                            ctx.fillStyle = red
+                        } else if (rx_r < timePosition.value && rx_r + w_r > timePosition.value) {
+                            ctx.fillStyle = blue
+                        }
+                    ctx.fillRect(rx, ry, w, h);
+                    ctx.fillStyle = i.color
+                    ctx.fillText(i.name, rx, ry + h * 0.7, w)
+                    console.log(rx, rx_r, canvasWidth, ry, w, w_r)
+                }
+            })
+        })
     })
-}
-export const inRangeCurData = computed(() => todayData.data.filter((i) =>
-    i.getRelativeData().start < timePosition.value && i.getRelativeData().end > timePosition.value)
 
+}
+export const inRangeCurData = computed(() => {
+    const todayTransactions = new Array<ExplicityTask>()
+    useTaskStore().taskGroups.forEach(tasks => {
+        tasks.tasks.forEach(task => {
+            task.transcations.forEach(i => {
+                const rx_r = ExplicityTask.getStartPointRatio(i)
+                const w_r = ExplicityTask.getTimeRatio(i)
+                if (rx_r < timePosition.value && rx_r + w_r > timePosition.value) {
+                    todayTransactions.push(i)
+                }
+            })
+        })
+    })
+    return todayTransactions
+}
 )
-export const inRangeSelectData = computed(() =>
-    todayData.data.filter((i) => {
-        const rx = i.getRelativeData().start * canvasWidth, w = i.getRelativeData().length * canvasWidth
-        return rx < mouseClickX.value && rx + w > mouseClickX.value
-    }))
+export const inRangeSelectData = computed(() => {
+    const todayTransactions = new Array<ExplicityTask>()
+    useTaskStore().taskGroups.forEach(tasks => {
+        tasks.tasks.forEach(task=>{
+            task.transcations.forEach(i=>{
+                const rx_r = ExplicityTask.getStartPointRatio(i)
+                const rx = rx_r * canvasWidth;
+                const w_r = ExplicityTask.getTimeRatio(i)
+                const w = w_r * canvasWidth
+                if(rx < mouseClickX.value && rx + w > mouseClickX.value){
+                    todayTransactions.push(i)
+                }
+            })
+        })
+    })
+    return todayTransactions
+})

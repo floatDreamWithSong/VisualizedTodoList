@@ -44,8 +44,6 @@ defineProps({
     <div
         class=" border-t-2 border-slate-200 w-full pt-2 *:rounded-lg flex *:w-full *:mr-2 *:flex *:items-center *:justify-around *:cursor-pointer *:transition-all">
         <div>
-            <!-- <i class="bi-plus-circle hover:cursor-pointer"
-                @click="(taskStroe.addTaskGroup(taskGroupName), taskGroupName = '')"></i> -->
             <input @keyup.enter="(taskStroe.addTaskGroup(taskGroupName), taskGroupName = '')" v-model="taskGroupName"
                 type="text" class="p-1 pl-2 outline-none rounded-lg" :class="theme.isDarkMode ? ' bg-white/5' : ''"
                 placeholder="+ Add New Group" maxlength="24">
