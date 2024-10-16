@@ -30,7 +30,7 @@ defineProps({
         <li class="*:hover:opacity-100 relative transition-all hover:bg-slate-500/50 p-2 rounded-md  cursor-pointer ani flex justify-between"
             v-for="(i, ind) in taskGroupComputed" :class="(theme.isDarkMode ? ' ' : ' bg-slate-100 ') +
                 (currentGroupId == ind ? 'bg-slate-500/35' : '')" @click="(changeGroup as Function)(ind)" :key="i.id">
-            <span>{{ i.groupName }}</span>
+            <span class=" overflow-hidden text-ellipsis text-nowrap">{{ i.groupName }}</span>
             <div class="opacity-0 *:p-1 *:rounded-lg relative z-1">
                 <i @click.stop="taskStroe.deleteTaskGroupById(ind)"
                     class="hover:bg-red-500/20 bi-trash-fill text-red-700"></i>
@@ -44,11 +44,9 @@ defineProps({
     <div
         class=" border-t-2 border-slate-200 w-full pt-2 *:rounded-lg flex *:w-full *:mr-2 *:flex *:items-center *:justify-around *:cursor-pointer *:transition-all">
         <div>
-            <i class="bi-plus-circle hover:cursor-pointer"
-                @click="(taskStroe.addTaskGroup(taskGroupName), taskGroupName = '')"></i>
             <input @keyup.enter="(taskStroe.addTaskGroup(taskGroupName), taskGroupName = '')" v-model="taskGroupName"
-                type="text" class="p-1 outline-none rounded-lg" :class="theme.isDarkMode ? ' bg-white/5' : ''"
-                placeholder="New Group" maxlength="24">
+                type="text" class="p-1 pl-2 outline-none rounded-lg" :class="theme.isDarkMode ? ' bg-white/5' : ''"
+                placeholder="+ Add New Group" maxlength="24">
         </div>
     </div>
 </template>

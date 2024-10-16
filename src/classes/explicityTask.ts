@@ -1,4 +1,4 @@
-import { Task } from "./Task";
+import { Task } from './Task';
 
 export class ExplicityTask extends Task {
     start: Time
@@ -16,6 +16,16 @@ export class ExplicityTask extends Task {
         this.end = end
         this.work = work
     }
+    static getTimeRatio(task: ExplicityTask) {
+        return (Time.toMins(task.end) - Time.toMins(task.start)) / 1440;
+    }
+    static getStartPointRatio(task: ExplicityTask) {
+        return Time.toMins(task.start) / 1440;
+    }
+    static getCompleteRatio(task: ExplicityTask){
+        const d = new Date();
+        return ((d.getHours()*60+d.getMinutes())-Time.toMins(task.start))/ (Time.toMins(task.end) - Time.toMins(task.start))
+    }
 }
 export class Time {
     hour: number
@@ -32,9 +42,12 @@ export class Time {
         const a = str.split(':')
         return new Time(Number(a[0]), Number(a[1]))
     }
-    calcMinutes() {
-        return this.hour * 60 + this.minutes
+    static toMins(time: Time) {
+        return time.hour * 60 + time.minutes
     }
+    // calcMinutes() {
+    //     return this.hour * 60 + this.minutes
+    // }
     applyCache() {
         const t = Time.constructeByString(this.cacheString)
         this.hour = t.hour
@@ -55,15 +68,7 @@ export class WeekModeWorkTime implements WorkTime {
     isWorkToday(): boolean {
         const flag = new Date().toDateString().split(' ')[0]
         return this.arr.some(i => {
-            i == flag
+            return i == flag
         })
     }
 }
-// export class CustomModeWorkTime implements WorkTime {
-//     type: string = 'custom'
-//     arr: FormatedDate[] = []
-//     isWorkToday() {
-//         return this.arr.some(i => FormatedDate.equal(new FormatedDate(), i))
-//     }
-
-// }
