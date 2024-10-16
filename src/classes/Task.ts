@@ -17,7 +17,7 @@ export class TaskGroup {
     tasks: ImplicityTask[]
     groupName: string
     id: number = new Date().getTime()+Math.random()
-    constructor(name: string) {
+    constructor(name: string, id?: number ) {
         this.groupName = name
         this.tasks = []
     }

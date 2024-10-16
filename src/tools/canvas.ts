@@ -1,6 +1,4 @@
-import { todayTransaction } from "@/stores/today";
 import { computed, ref } from "vue";
-import { todayData } from "@/stores/today";
 import type { TaskGroup } from "@/classes/Task";
 import type { ImplicityTask } from "@/classes/implicityTask";
 import { ExplicityTask } from "@/classes/explicityTask";

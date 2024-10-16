@@ -54,12 +54,7 @@ export class Time {
         this.minutes = t.minutes
     }
 }
-export interface WorkTime {
-    type: string
-    isWorkToday: () => boolean
-}
-export class WeekModeWorkTime implements WorkTime {
-    type: string = 'week'
+export class WeekModeWorkTime  {
     arr: string[] = []
     static day = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']
     constructor(strs: string[]) {

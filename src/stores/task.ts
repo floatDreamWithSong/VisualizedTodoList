@@ -1,23 +1,60 @@
-import { getMonitorTasksData } from '@/classes'
-import type { ImplicityTask } from '@/classes/implicityTask'
+// import { getMonitorTasksData } from '@/classes'
+import { FormatedDate, ImplicityTask } from '@/classes/implicityTask'
 import { TaskGroup } from '@/classes/Task'
 import { defineStore } from 'pinia'
-import { reactive } from 'vue'
-
+import { reactive, toRaw } from 'vue'
+import localforage from 'localforage'
+import { ExplicityTask, Time, WeekModeWorkTime } from '@/classes/explicityTask'
+const TASK_GROUP_KEY = 'localData'
+const TASK_GROUP_DATA = 'local_task_group_data'
+const IM_TASK_KEY = 'local_im_task_id'
+const EX_TASK_KEY = 'local_ex_task_id'
 export const useTaskStore = defineStore('task', () => {
-    const taskGroups: TaskGroup[] = reactive(getMonitorTasksData())
+    const initData = () => {
+        let taskGroups = reactive(new Array<TaskGroup>());
+        localforage.getItem(TASK_GROUP_KEY).then(res => {
+            console.log(res)
+            if (typeof res === 'string') {
+                const _data = JSON.parse(res as string) as TaskGroup[]
+                _data.forEach(taskgroup => {
+                    const data = new TaskGroup(taskgroup.groupName, taskgroup.id);
+                    taskgroup.tasks.forEach(task => {
+                        const d = new ImplicityTask(task.name, task.description, new FormatedDate(task.fromDate.year, task.fromDate.month, task.fromDate.day), new FormatedDate(task.toDate.year, task.toDate.month, task.toDate.day), task.repeatTimes, task.duration, task.bgColor, task.color)
+                        task.transcations.forEach(i => {
+                            const _d = new ExplicityTask(i.name, i.description, new Time(i.start.hour, i.start.minutes), new Time(i.end.hour, i.end.minutes), new WeekModeWorkTime(i.work.arr), i.bgColor, i.color)
+                            _d.isTimeEnable = i.isTimeEnable
+                            _d.isTimeValid = i.isTimeValid
+                            d.transcations.push(_d)
+                        })
+                        data.tasks.push(d);
+                    })
+                    taskGroups.push(data)
+                })
+            }
+        }).catch(err => {
+            console.error(err);
+        })
+        return { taskGroups };
+    }
+
+    const {taskGroups}  = initData()
     const addTaskGroup = (name: string) => {
         taskGroups.push(new TaskGroup(name))
+        localforage.setItem('localData', JSON.stringify(toRaw(taskGroups)))
     }
     const addTaskIntoGroup = (index: number, task: ImplicityTask) => {
         taskGroups[index].tasks.push(reactive(task))
+        localforage.setItem('localData', JSON.stringify(toRaw(taskGroups)))
     }
     const deleteTaskFromGroupById = (index: number, taskIndex: number) => {
         taskGroups[index].tasks.splice(taskIndex, 1)
+        localforage.setItem('localData', JSON.stringify(toRaw(taskGroups)))
     }
     const deleteTaskGroupById = (index: number) => {
         taskGroups.splice(index, 1)
+        localforage.setItem('localData', JSON.stringify(toRaw(taskGroups)))
     }
+
     return {
         taskGroups,
         addTaskGroup,
