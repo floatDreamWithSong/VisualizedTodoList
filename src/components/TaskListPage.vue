@@ -31,6 +31,7 @@ const closeTaskEditor = () => {
 let fixedTaskName = ''
 </script>
 <template>
+    <slot></slot>
     <div v-if="!isEmptyPage() && props.currentGroupId != undefined"
         class="w-full h-full grid relative custom-grid2 overflow-hidden">
         <div class="flex items-center w-full text-2xl font-bold px-4 z-11 justify-between">
@@ -43,7 +44,6 @@ let fixedTaskName = ''
                 :class="theme.isDarkMode ? ' bg-white/5  hover:bg-black/5 border-white/5 ' : ' bg-slate-100  hover:bg-slate-200 '"
                 v-for="(i, ind) in taskStroe.taskGroups[props.currentGroupId].tasks" :key="i.id">
                 <span>
-
                     <p class=" font-semibold text-lg">{{ i.name }}</p>
                     <i class="bi-calendar3 p-1 rounded-sm text-sm">&nbsp;{{ i.fromDate.toString() }} - {{
                         i.toDate.toString() }}</i>
