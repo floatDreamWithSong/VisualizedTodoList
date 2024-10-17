@@ -21,11 +21,14 @@ const sideNavInfo = [{
   text:'WorkBench',
   link:'/dashboard/workbench',
   ico:'bi-person'
-},{
-  text:'Settings',
-  link:'/dashboard/settings',
-  ico:'bi-sliders'
-}]
+}
+// ,
+// {
+//   text:'Settings',
+//   link:'/dashboard/settings',
+//   ico:'bi-sliders'
+// }
+]
 </script>
 <template>
     <div id="dash-box" class=" w-full h-full font-semibold  p-4 grid custom-box-grid transition-all" :class="(theme.isDarkMode?'text-slate-200':'text-slate-800')+(sideBarStatus?' custom-box-grid':' custom-close-grid')">

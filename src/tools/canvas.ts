@@ -168,48 +168,52 @@ function drawTransaction(ctx: CanvasRenderingContext2D, taskGroups: TaskGroup[])
     // console.log(taskGroups)
     setFontStyle(28)
     let t = [-1]
+    const d = new Date()
     taskGroups.forEach(tasks => {
         tasks.tasks.forEach((task: ImplicityTask) => {
-            task.transcations.forEach((i: ExplicityTask) => {
-                // console.log(i, i.isTimeEnable, i.work.isWorkToday())
-                if (i.isTimeEnable && i.work.isWorkToday()) {
-                    // console.log(i)
-                    let row = 0
-                    let resolved = false;
-                    ctx.fillStyle = i.bgColor
-                    const h = transactionH
-                    const rx_r = ExplicityTask.getStartPointRatio(i)
-                    const rx = rx_r * canvasWidth;
-                    const w_r = ExplicityTask.getTimeRatio(i)
-                    const w = w_r * canvasWidth
-                    const ed = rx + w;
-                    for (let i = 0; i < t.length; i++) {
-                        if (t[i] < rx) {
-                            t[i] = ed;
-                            row = i
-                            resolved = true
-                            break;
+
+            if (task.toDate.year >= d.getFullYear() && task.toDate.month >= d.getMonth() + 1 && task.toDate.day >= d.getDate())
+                task.transcations.forEach((i: ExplicityTask) => {
+                    // console.log(i, i.isTimeEnable, i.work.isWorkToday())
+                    if (i.isTimeEnable && i.work.isWorkToday()) {
+
+                        // console.log(i)
+                        let row = 0
+                        let resolved = false;
+                        ctx.fillStyle = i.bgColor
+                        const h = transactionH
+                        const rx_r = ExplicityTask.getStartPointRatio(i)
+                        const rx = rx_r * canvasWidth;
+                        const w_r = ExplicityTask.getTimeRatio(i)
+                        const w = w_r * canvasWidth
+                        const ed = rx + w;
+                        for (let i = 0; i < t.length; i++) {
+                            if (t[i] < rx) {
+                                t[i] = ed;
+                                row = i
+                                resolved = true
+                                break;
+                            }
                         }
-                    }
-                    if (!resolved) {
-                        row = t.length;
-                        t.push(ed);
-                    }
-                    const ry = row * h + canvasRootHeight + row
-                    if (rx < mousePositionX.value && rx + w > mousePositionX.value) {
-                        ctx.fillStyle = green
-                    } else
-                        if (rx < mouseClickX.value && rx + w > mouseClickX.value) {
-                            ctx.fillStyle = red
-                        } else if (rx_r < timePosition.value && rx_r + w_r > timePosition.value) {
-                            ctx.fillStyle = blue
+                        if (!resolved) {
+                            row = t.length;
+                            t.push(ed);
                         }
-                    ctx.fillRect(rx, ry, w, h);
-                    ctx.fillStyle = i.color
-                    ctx.fillText(i.name, rx, ry + h * 0.7, w)
-                    // console.log(rx, rx_r, canvasWidth, ry, w, w_r)
-                }
-            })
+                        const ry = row * h + canvasRootHeight + row
+                        if (rx < mousePositionX.value && rx + w > mousePositionX.value) {
+                            ctx.fillStyle = green
+                        } else
+                            if (rx < mouseClickX.value && rx + w > mouseClickX.value) {
+                                ctx.fillStyle = red
+                            } else if (rx_r < timePosition.value && rx_r + w_r > timePosition.value) {
+                                ctx.fillStyle = blue
+                            }
+                        ctx.fillRect(rx, ry, w, h);
+                        ctx.fillStyle = i.color
+                        ctx.fillText(i.name, rx, ry + h * 0.7, w)
+                        // console.log(rx, rx_r, canvasWidth, ry, w, w_r)
+                    }
+                })
         })
     })
 
