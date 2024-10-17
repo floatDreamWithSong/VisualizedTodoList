@@ -28,7 +28,7 @@ export const useTaskStore = defineStore('task', () => {
                         })
                         data.tasks.push(d);
                     })
-                    taskGroups.push(data)
+                    taskGroups.push( reactive(data))
                 })
             }
         }).catch(err => {

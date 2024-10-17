@@ -56,7 +56,7 @@ export class Time {
 }
 export class WeekModeWorkTime  {
     arr: string[] = []
-    static day = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']
+    static day = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     constructor(strs: string[]) {
         this.arr = [...strs]
     }
