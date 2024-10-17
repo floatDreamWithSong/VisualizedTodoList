@@ -8,7 +8,7 @@ export class Validation {
     validate(condition: boolean, mes: string = '', callback: Function | undefined = undefined, errorCallback: Function | undefined = undefined) {
         if (!condition) {
             if (mes.length)
-                console.error(++this.count, mes)
+                // console.error(++this.count, mes)
             if (errorCallback != undefined) {
                 errorCallback()
             }

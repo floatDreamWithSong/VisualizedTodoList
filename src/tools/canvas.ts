@@ -1,6 +1,4 @@
-import { todayTransaction } from "@/stores/today";
 import { computed, ref } from "vue";
-import { todayData } from "@/stores/today";
 import type { TaskGroup } from "@/classes/Task";
 import type { ImplicityTask } from "@/classes/implicityTask";
 import { ExplicityTask } from "@/classes/explicityTask";
@@ -173,9 +171,9 @@ function drawTransaction(ctx: CanvasRenderingContext2D, taskGroups: TaskGroup[])
     taskGroups.forEach(tasks => {
         tasks.tasks.forEach((task: ImplicityTask) => {
             task.transcations.forEach((i: ExplicityTask) => {
-                console.log(i, i.isTimeEnable, i.work.isWorkToday())
+                // console.log(i, i.isTimeEnable, i.work.isWorkToday())
                 if (i.isTimeEnable && i.work.isWorkToday()) {
-                    console.log(i)
+                    // console.log(i)
                     let row = 0
                     let resolved = false;
                     ctx.fillStyle = i.bgColor
@@ -209,7 +207,7 @@ function drawTransaction(ctx: CanvasRenderingContext2D, taskGroups: TaskGroup[])
                     ctx.fillRect(rx, ry, w, h);
                     ctx.fillStyle = i.color
                     ctx.fillText(i.name, rx, ry + h * 0.7, w)
-                    console.log(rx, rx_r, canvasWidth, ry, w, w_r)
+                    // console.log(rx, rx_r, canvasWidth, ry, w, w_r)
                 }
             })
         })
@@ -221,10 +219,12 @@ export const inRangeCurData = computed(() => {
     useTaskStore().taskGroups.forEach(tasks => {
         tasks.tasks.forEach(task => {
             task.transcations.forEach(i => {
-                const rx_r = ExplicityTask.getStartPointRatio(i)
-                const w_r = ExplicityTask.getTimeRatio(i)
-                if (rx_r < timePosition.value && rx_r + w_r > timePosition.value) {
-                    todayTransactions.push(i)
+                if (i.isTimeEnable && i.work.isWorkToday()) {
+                    const rx_r = ExplicityTask.getStartPointRatio(i)
+                    const w_r = ExplicityTask.getTimeRatio(i)
+                    if (rx_r < timePosition.value && rx_r + w_r > timePosition.value) {
+                        todayTransactions.push(i)
+                    }
                 }
             })
         })
@@ -235,14 +235,16 @@ export const inRangeCurData = computed(() => {
 export const inRangeSelectData = computed(() => {
     const todayTransactions = new Array<ExplicityTask>()
     useTaskStore().taskGroups.forEach(tasks => {
-        tasks.tasks.forEach(task=>{
-            task.transcations.forEach(i=>{
-                const rx_r = ExplicityTask.getStartPointRatio(i)
-                const rx = rx_r * canvasWidth;
-                const w_r = ExplicityTask.getTimeRatio(i)
-                const w = w_r * canvasWidth
-                if(rx < mouseClickX.value && rx + w > mouseClickX.value){
-                    todayTransactions.push(i)
+        tasks.tasks.forEach(task => {
+            task.transcations.forEach(i => {
+                if (i.isTimeEnable && i.work.isWorkToday()) {
+                    const rx_r = ExplicityTask.getStartPointRatio(i)
+                    const rx = rx_r * canvasWidth;
+                    const w_r = ExplicityTask.getTimeRatio(i)
+                    const w = w_r * canvasWidth
+                    if (rx < mouseClickX.value && rx + w > mouseClickX.value) {
+                        todayTransactions.push(i)
+                    }
                 }
             })
         })

@@ -3,6 +3,7 @@ import { useCounterStore } from '@/stores/counter';
 import { useTaskStore } from '@/stores/task';
 import TaskEditor from './TaskEditor.vue';
 import { ref } from 'vue';
+import type { ImplicityTask } from '@/classes/implicityTask';
 const theme = useCounterStore()
 const taskStroe = useTaskStore()
 const taskName = ref('')
@@ -21,29 +22,40 @@ const isTaskListShouldBeRender = () => {
 const isEmptyPage = () => {
     return !isTaskGroupIndexCorrect()
 }
+const openTaskEditorForRewrite=(task: ImplicityTask)=>{
+    targetTransaction = task
+    isOpenTaskEditor.value = true
+
+}
+let targetTransaction : ImplicityTask|undefined = undefined
 const openTaskEditor = (taskName: string) => {
-    fixedTaskName = taskName.concat('')
+    fixedTaskName = taskName
+    targetTransaction = undefined
     isOpenTaskEditor.value = true
 }
 const closeTaskEditor = () => {
     isOpenTaskEditor.value = false
+    targetTransaction = undefined
 }
 let fixedTaskName = ''
 </script>
 <template>
 
+        <slot></slot>
+
     <div v-if="!isEmptyPage() && props.currentGroupId != undefined"
         class="w-full h-full grid relative custom-grid2 overflow-hidden">
-        <div class="flex items-center w-full text-2xl font-bold px-4 z-11 justify-start">
-            <slot></slot>
+        <div class="flex items-center w-full text-2xl font-bold px-4 z-11">
+            
             <input type="text" class=" my-4 bg-transparent outline-none p-2 rounded-md focus-within:border-b-2 "
                 v-model.lazy="taskStroe.taskGroups[props.currentGroupId].groupName" />
+
         </div>
         <TransitionGroup v-if="isTaskListShouldBeRender()" name="list" tag="ul"
             class=" bg-transparent w-full flex-grow relative  overflow-y-scroll px-20 pt-12">
             <li class="relative *:hover:opacity-100 p-2 flex justify-between rounded-md transition-all mb-2 cursor-pointer border-2 border-slate-200/50"
                 :class="theme.isDarkMode ? ' bg-white/5  hover:bg-black/5 border-white/5 ' : ' bg-slate-100  hover:bg-slate-200 '"
-                v-for="(i, ind) in taskStroe.taskGroups[props.currentGroupId].tasks" :key="i.id">
+                v-for="(i, ind) in taskStroe.taskGroups[props.currentGroupId].tasks" :key="i.id" @click="()=>openTaskEditorForRewrite(i)">
                 <span>
                     <p class=" font-semibold text-lg">{{ i.name }}</p>
                     <i class="bi-calendar3 p-1 rounded-sm text-sm">&nbsp;{{ i.fromDate.toString() }} - {{
@@ -91,7 +103,7 @@ let fixedTaskName = ''
         Empty Page
     </div>
     <Teleport v-if="isOpenTaskEditor" to="body">
-        <TaskEditor :task-name="fixedTaskName" :gid="currentGroupId" :close-task-editor="closeTaskEditor" />
+        <TaskEditor :task-name="fixedTaskName" :gid="currentGroupId" :close-task-editor="closeTaskEditor" :task="targetTransaction" />
     </Teleport>
 </template>
 <style scoped>
