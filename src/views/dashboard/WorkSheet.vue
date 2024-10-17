@@ -32,7 +32,7 @@ const theme = useCounterStore()
       <div id="canvas-box" class=" shadow-md w-full p-2 mt-4 rounded-lg">
         <canvas class="bg-transparent w-full" id="canvas" ref="canvas">Your device is not support canvas</canvas>
       </div>
-      <div class="w-full flex justify-around overflow-y-scroll *:shadow-md">
+      <div class="w-full *:mb-1 flex justify-around overflow-y-scroll *:shadow-md">
         <ShowTransaction text="There is no thing to do now..." :data="inRangeCurData" :is-cur="true" />
         <ShowTransaction text="Select no thing..." :data="inRangeSelectData" :is-cur="false" />
       </div>
