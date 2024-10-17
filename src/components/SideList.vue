@@ -27,8 +27,8 @@ defineProps({
 
     <TransitionGroup v-if="isTaskGroupShoudlBeRender()" name="list" tag="ul"
         class="w-full flex-grow  overflow-y-scroll">
-        <li class="*:hover:opacity-100 relative transition-all hover:bg-slate-500/50 p-2 rounded-md  cursor-pointer ani flex justify-between"
-            v-for="(i, ind) in taskGroupComputed" :class="(theme.isDarkMode ? ' ' : ' bg-slate-100 ') +
+        <li class="*:hover:opacity-100 relative transition-all hover:bg-slate-500/50 p-2 overflow-hidden rounded-md  cursor-pointer ani flex justify-between"
+            v-for="(i, ind) in taskGroupComputed" :class="(theme.isDarkMode ? ' bg-white/5 max-lg:hover:bg-black/20 ' : ' bg-slate-100 ') +
                 (currentGroupId == ind ? 'bg-slate-500/35' : '')" @click="(changeGroup as Function)(ind)" :key="i.id">
             <span class=" overflow-hidden text-ellipsis text-nowrap">{{ i.groupName }}</span>
             <div class="opacity-0 *:p-1 *:rounded-lg relative z-1">

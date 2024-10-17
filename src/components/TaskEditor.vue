@@ -14,37 +14,51 @@ function updateTimeString(e: Event, time: Time) {
 const props = defineProps({
     taskName: String,
     closeTaskEditor: Function,
-    gid: Number
+    gid: Number,
+    task: ImplicityTask
 })
 const todayFormated = new FormatedDate()
-const task_name = ref(props.taskName as string)
-const task_desc = ref('no description')
-const fromDate = ref(todayFormated.toString())
-const toDate = ref(todayFormated.toString())
-const repeatTimes = ref(0)
-const duration = ref(0)
-const bgColor = ref('#fcfcfc')
-const color = ref('#2c2c2c')
-const Transactions = ref<ExplicityTask[]>([])
+const task_name = ref(props.task ? props.task.name : props.taskName as string)
+const task_desc = ref(props.task ? props.task.description : 'no description')
+const fromDate = ref(props.task ? props.task.fromDate.toString() : todayFormated.toString())
+const toDate = ref(props.task ? props.task.toDate.toString() : todayFormated.toString())
+const repeatTimes = ref(props.task ? props.task.repeatTimes : 0)
+const duration = ref(props.task ? props.task.duration : 0)
+const bgColor = ref(props.task ? props.task.bgColor : '#fcfcfc')
+const color = ref(props.task ? props.task.color : '#2c2c2c')
+const Transactions = ref<ExplicityTask[]>(props.task ? [...props.task.transcations] : [])
 const validateColorFormat = (color: string) => {
     return color.startsWith('#') && (color.length == 7 || color.length == 9)
 }
 const setTask = () => {
     if (validate()) {
-        taskStore.addTaskIntoGroup(props.gid as number, (function () {
-            const task = new ImplicityTask(
-                task_name.value,
-                task_desc.value,
-                FormatedDate.constructByString(fromDate.value),
-                FormatedDate.constructByString(toDate.value),
-                repeatTimes.value,
-                duration.value,
-                bgColor.value,
-                color.value
-            )
-            task.transcations = Transactions.value
-            return task
-        })())
+        if (props.task) {
+            props.task.name = task_name.value
+            props.task.description = task_desc.value
+            props.task.fromDate = FormatedDate.constructByString(fromDate.value)
+            props.task.toDate = FormatedDate.constructByString(toDate.value)
+            props.task.repeatTimes = repeatTimes.value
+            props.task.duration = duration.value
+            props.task.bgColor = bgColor.value
+            props.task.color = color.value
+            props.task.transcations = Transactions.value
+            useTaskStore().storageData()
+        } else {
+            taskStore.addTaskIntoGroup(props.gid as number, (function () {
+                const task = new ImplicityTask(
+                    task_name.value,
+                    task_desc.value,
+                    FormatedDate.constructByString(fromDate.value),
+                    FormatedDate.constructByString(toDate.value),
+                    repeatTimes.value,
+                    duration.value,
+                    bgColor.value,
+                    color.value
+                )
+                task.transcations = Transactions.value
+                return task
+            })())
+        }
         props.closeTaskEditor ? props.closeTaskEditor() : 0;
     }
 }
@@ -99,7 +113,7 @@ const validateTranscation = (t: ExplicityTask) => {
 </script>
 <template>
     <!--@vue-ignore-->
-    <div class="w-full h-full z-50 absolute bg-black/20 flex justify-center items-center" @mousedown="closeTaskEditor">
+    <div class="w-full h-full z-50 absolute bg-black/20 flex justify-center items-center" @mousedown="setTask">
         <div @mousedown.capture.stop="''" :class="theme.isDarkMode ? ' bg-black/60  text-slate-50 ' : 'bg-white/50'"
             class="w-3/5 h-3/5 rounded-lg p-4 pl-12 backdrop-blur-md animate__animated animate__bounceIn animate__faster overflow-y-auto relative">
             <!-- <p>{{ fromDate + toDate + bgColor + color }}</p> -->
@@ -175,7 +189,7 @@ const validateTranscation = (t: ExplicityTask) => {
                 </div>
             </TransitionGroup>
             <br>
-            <button @click="setTask">确认</button>
+            <button @click="setTask" >提交</button>
             <!--@vue-ignore-->
         </div>
     </div>
